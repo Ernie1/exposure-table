@@ -1,0 +1,77 @@
+geth --datadir . init genesis.json
+geth --datadir . console --identity "user0" --port "30303" --rpc --rpccorsdomain="*" --rpcport "8545" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+geth --datadir . console --identity "user1" --port "30304" --rpc --rpccorsdomain="*" --rpcport "8546" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+geth --datadir . console --identity "user2" --port "30305" --rpc --rpccorsdomain="*" --rpcport "8547" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+geth --datadir . console --identity "user3" --port "30306" --rpc --rpccorsdomain="*" --rpcport "8548" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+
+
+geth attach geth.ipc 
+
+
+const Web3 = require('web3');
+const web3Admin = require('web3admin');
+web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+web3Admin.extend(web3);
+web3.personal.newAccount('123');
+
+web3.admin.nodeInfo
+// user1
+web3.admin.addPeer('enode://614bdf097f683c5346e396a272e265597ce6dca4e2af0d21df2f12015f86ec849d84a94ed4c80e2a52a9c91d1779589fdfc05dc50c289680343f6d4e8022e404@127.0.0.1:30303');
+
+web3.personal.unlockAccount(web3.eth.accounts[0],'123');
+
+// 部署，要有足够余额
+etInstance = etContract.at(et.address);
+etInstance = etContract.at('0xb8b5fa2d57ac91bf2ac4ad8c6493e5e01cf12aef')
+
+web3.miner.start();
+// web3.eth.mining
+
+web3.eth.getBalance(web3.eth.accounts[0]);
+
+etInstance.replyExposure(0,'te',{from:web3.eth.accounts[0],gas:4700000});
+etInstance.userRegister('user0',true,{from:web3.eth.accounts[0],gas:4700000});
+
+// 注册或登录
+etInstance.useraddrExist(web3.eth.accounts[0])
+etInstance.usernameExist(
+web3.personal.unlockAccount(web3.eth.accounts[0],'123');
+// watch
+etInstance.userRegister('user1',false,{from:web3.eth.accounts[0],gas:4700000},function(err, result){
+    if(!err){
+        console.log(result);
+    } else {
+        console.log('EEE'+err);
+    }
+});
+
+etInstance.exposureByIndex.call(1, function(err, result){
+    if(!err){
+        console.log(result);
+    } else {
+        console.log('EEE'+err);
+    }
+})
+
+etInstance.exposureByIndex(1, function(err, result){
+    if(!err){
+        console.log(result);
+    } else {
+        console.log('EEE'+err);
+    }
+})
+
+etInstance.createExposure('user0','cc',{from:web3.eth.accounts[0],gas:4700000},function(err, result){
+    if(!err){
+        console.log(result);
+    } else {
+        console.log('EEE'+err);
+    }
+});
+
+web3.personal.unlockAccount(web3.eth.accounts[0],'1234',function(err,res){
+    if(err){
+        console.log('123');
+    }
+})

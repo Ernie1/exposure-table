@@ -14,3 +14,16 @@
 13:03:50.826710 version@stat F·[1] S·542B[542B] Sc·[0.25]
 13:03:50.828211 db@janitor F·3 G·0
 13:03:50.828248 db@open done T·9.609372ms
+=============== Dec 17, 2018 (CST) ===============
+08:44:14.720863 db@close closing
+08:44:14.721606 db@close done T·753.416µs
+=============== Dec 17, 2018 (CST) ===============
+08:44:37.766918 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+08:44:37.767917 version@stat F·[1] S·542B[542B] Sc·[0.25]
+08:44:37.767949 db@open opening
+08:44:37.768038 journal@recovery F·1
+08:44:37.772157 journal@recovery recovering @3
+08:44:37.786243 memdb@flush created L0@5 N·5673 S·458KiB "\x01\xf9\x93..6DN,v5642":"\xfc\xfc\x82..\x8f\xd9\xc2,v5482"
+08:44:37.789382 version@stat F·[2] S·459KiB[459KiB] Sc·[0.50]
+08:44:37.796272 db@janitor F·4 G·0
+08:44:37.796320 db@open done T·28.351309ms

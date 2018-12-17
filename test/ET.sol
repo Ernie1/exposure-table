@@ -91,13 +91,14 @@ contract ET {
     }
 
     //获取用户个人信息
-    function userInfo() public view returns(string memory, uint) {
+    function userInfo() public view returns(string memory, uint, bool) {
         require(useraddrExist(msg.sender), '用户地址不存在');
         for (uint i = 0; i < userList.length; i++) {
             if (userList[i].addr == msg.sender)
                 return (
                     userList[i].name,
-                    userList[i].time
+                    userList[i].time,
+                    userList[i].supervisee
                 );
         }
     }

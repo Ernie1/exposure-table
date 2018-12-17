@@ -1,0 +1,34 @@
+=============== Dec 16, 2018 (CST) ===============
+16:59:36.110749 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+16:59:36.111753 db@open opening
+16:59:36.112026 version@stat F·[] S·0B[] Sc·[]
+16:59:36.112288 db@janitor F·2 G·0
+16:59:36.112314 db@open done T·545.471µs
+18:50:06.126746 memdb@flush N·50667 S·3MiB
+18:50:06.154239 memdb@flush created L0@3 N·50667 S·754KiB "n:\x00..ver,v15783":"version,v1"
+18:50:06.154286 version@stat F·[1] S·754KiB[754KiB] Sc·[0.25]
+18:50:06.154637 memdb@flush committed F·1 T·25.205783ms
+18:50:06.155943 journal@remove removed @1
+23:05:11.290412 memdb@flush N·50858 S·3MiB
+23:05:11.314207 memdb@flush created L0@5 N·50858 S·746KiB "n:\x00..ing,v73476":"n:\xff..ail,v84929"
+23:05:11.314250 version@stat F·[2] S·1MiB[1MiB] Sc·[0.50]
+23:05:11.314660 memdb@flush committed F·1 T·23.958741ms
+23:05:11.315359 journal@remove removed @2
+23:05:41.289657 table@compaction L0·2 -> L1·0 S·1MiB Q·101731
+23:05:41.325668 table@build created L1@6 N·16899 S·579KiB "n:\x00..ing,v73476":"version,v1"
+23:05:41.325777 version@stat F·[0 1] S·579KiB[0B 579KiB] Sc·[0.00 0.01]
+23:05:41.326197 table@compaction committed F-1 S-920KiB Ke·0 D·84626 T·36.463813ms
+23:05:41.326514 table@remove removed @5
+23:05:41.326867 table@remove removed @3
+=============== Dec 17, 2018 (CST) ===============
+08:45:03.485938 memdb@flush N·50202 S·3MiB
+08:45:03.512637 memdb@flush created L0@8 N·50202 S·713KiB "n:\x00..ing,v110626":"n:\xff..ail,v102265"
+08:45:03.512700 version@stat F·[1 1] S·1MiB[713KiB 579KiB] Sc·[0.25 0.01]
+08:45:03.513225 memdb@flush committed F·1 T·26.929312ms
+08:45:03.514203 journal@remove removed @4
+08:45:48.587242 table@compaction L0·1 -> L1·1 S·1MiB Q·152054
+08:45:48.612776 table@build created L1@9 N·23415 S·805KiB "n:\x00..ing,v73476":"version,v1"
+08:45:48.612855 version@stat F·[0 1] S·805KiB[0B 805KiB] Sc·[0.00 0.01]
+08:45:48.613143 table@compaction committed F-1 S-488KiB Ke·0 D·43686 T·25.8542ms
+08:45:48.613364 table@remove removed @8
+08:45:48.613870 table@remove removed @6
