@@ -2,13 +2,14 @@ from icrawler.builtin import BingImageCrawler, GoogleImageCrawler
 import threading
 
 keywords = [
-	'tree road block',
-	'cones on road',
-	'Rockfall',
-	'traffic accident on road',
-	'chair on middle of the road',
-	'lie on the road',
-	'围栏封路']
+	'ruler tear paper',
+	'ruler cutting paper',
+	'cutting paper',
+	'Knife unpacking box',
+	'teeth tear tape',
+	'bite tape',
+	'finger knife unpacking box',
+	'nimble finger knife']
 
 filters = dict(
     type='photo')

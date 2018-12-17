@@ -2,12 +2,19 @@
   <div>
     <el-container v-if="tableVisible">
       <el-header>
-        <span>曝光台</span>
+        <el-tooltip :visible-arrow="false" effect="light" content="宝宝" placement="right">
+          <span>曝光台</span>
+        </el-tooltip>
         <span>{{ name+'（监督'+(supervisee?'对象':'者')+'）' }}</span>
       </el-header>
       <el-container>
-        <el-aside>
-          <el-table :data="superviseeList" v-loading="superviseeLoading">
+        <el-aside width="180px">
+          <el-table
+            :data="superviseeList"
+            v-loading="superviseeLoading"
+            @row-click="createExposure"
+            v-if="tableAlive"
+          >
             <el-table-column prop="name" label="监督对象">
               <template slot-scope="scope">
                 <span>{{ scope.row.name }}</span>
@@ -21,7 +28,7 @@
           </el-table>
         </el-aside>
         <el-main>
-          <el-table :data="exposureList" v-loading="exposureLoading">
+          <el-table :data="exposureList" v-loading="exposureLoading" v-if="tableAlive">
             <el-table-column prop="superviserName" label="监督者">
               <template slot-scope="scope">
                 <span>{{ scope.row.superviserName }}</span>
@@ -59,17 +66,23 @@
     <el-dialog
       :title="mode"
       :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
+      :close-on-click-modal="mode=='创建曝光'"
+      :close-on-press-escape="mode=='创建曝光'"
+      :show-close="mode=='创建曝光'"
       :center="false"
-      :modal="false"
+      :modal="mode=='创建曝光'"
     >
       <el-input v-if="mode=='新建节点账户'" v-model="dialogInput" type="password" placeholder="请设置密码"></el-input>
 
       <el-input v-if="mode=='注册合约用户'" v-model="dialogInput" placeholder="请设置用户名">
         <el-checkbox slot="append" v-model="dialogChecked">被监督</el-checkbox>
       </el-input>
+
+      <el-input
+        v-if="mode=='创建曝光'"
+        v-model="dialogInput"
+        :placeholder="'请输入曝光 '+createExposureSupervisee+' 的内容'"
+      ></el-input>
 
       <span slot="footer">
         <el-button
@@ -84,6 +97,12 @@
           :loading="confirmButtonLoading"
           @click="userRegister"
         >确 定</el-button>
+        <el-button
+          v-if="mode=='创建曝光'"
+          type="primary"
+          :loading="confirmButtonLoading"
+          @click="createExposureConfirm"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -94,9 +113,7 @@ import Web3 from "web3";
 import web3Admin from "web3admin";
 import { contractInterface, contractAddress } from "../../config";
 import { formatTime } from "../../build/my-utils";
-// import { resolve } from "url";
-// import { rejects } from "assert";
-// import { constants } from 'http2';
+
 export default {
   name: "ET",
   created: async function() {
@@ -109,17 +126,11 @@ export default {
     } else {
       this.contract();
     }
-    // // 合约
-    // this.etInstance = this.web3.eth
-    //   .contract(contractInterface)
-    //   .at(contractAddress);
-    // // 合约用户
-    // if (!this.etInstance.useraddrExist(this.web3.eth.accounts[0])) {
-    //   this.dialogVisible = true;
-    // } else {
-    //   this.maintainSuperviseeList();
-    //   this.maintainExposureList();
-    // }
+    // 每分钟更新表格时间显示
+    setInterval(() => {
+      this.tableAlive = false;
+      this.$nextTick(() => (this.tableAlive = true));
+    }, 60000);
   },
 
   data() {
@@ -131,11 +142,13 @@ export default {
       confirmButtonLoading: false,
       superviseeLoading: false,
       exposureLoading: false,
+      tableAlive: true,
       superviseeList: [],
       exposureList: [],
       mode: "",
       name: "",
-      supervisee: false
+      supervisee: false,
+      createExposureSupervisee: ""
     };
   },
   filters: {
@@ -144,12 +157,13 @@ export default {
   methods: {
     connect: async function() {
       return new Promise((resolve, _) => {
-        this.$prompt("请输入 rpcport", "连接", {
+        this.$prompt("", "连接", {
           showCancelButton: false,
           closeOnClickModal: false,
           closeOnPressEscape: false,
           showClose: false,
           modal: false,
+          inputPlaceholder: "请输入 rpc 端口号",
           beforeClose: (_, instance, done) => {
             instance.confirmButtonLoading = true;
             this.web3 = new Web3(
@@ -240,10 +254,14 @@ export default {
         if (!err) {
           if (result.args.time.c[0] != 0) {
             that.superviseeLoading = true;
-            that.superviseeList.unshift({
-              name: result.args.name,
-              time: result.args.time.c[0]
-            });
+            if (
+              !that.superviseeList.find(item => item.name == result.args.name)
+            ) {
+              that.superviseeList.unshift({
+                name: result.args.name,
+                time: result.args.time.c[0]
+              });
+            }
             that.superviseeLoading = false;
           }
         }
@@ -272,15 +290,28 @@ export default {
       this.etInstance.createExposureEvent().watch(function(err, result) {
         if (!err) {
           that.exposureLoading = true;
-          that.exposureList.unshift({
-            index: result.args.index.c[0],
-            superviserName: result.args.superviserName,
-            superviseeName: result.args.superviseeName,
-            detail: result.args.detail,
-            detailTime: result.args.time.c[0],
-            reply: "",
-            replyTime: 0
-          });
+          if (
+            !that.exposureList.find(
+              item => item.index == result.args.index.c[0]
+            )
+          ) {
+            that.exposureList.unshift({
+              index: result.args.index.c[0],
+              superviserName: result.args.superviserName,
+              superviseeName: result.args.superviseeName,
+              detail: result.args.detail,
+              detailTime: result.args.time.c[0],
+              reply: "",
+              replyTime: 0
+            });
+            if (that.name == result.args.superviseeName) {
+              that.$notify({
+                title: result.args.superviserName,
+                message: result.args.detail,
+                duration: 0
+              });
+            }
+          }
           that.exposureLoading = false;
         }
       });
@@ -291,6 +322,13 @@ export default {
             if (that.exposureList[i].index == result.args.index.c[0]) {
               that.exposureList[i].reply = result.args.reply;
               that.exposureList[i].replyTime = result.args.time;
+              if (that.name == that.exposureList[i].superviserName) {
+                that.$notify({
+                  title: that.exposureList[i].superviseeName,
+                  message: result.args.reply,
+                  duration: 0
+                });
+              }
               break;
             }
           }
@@ -389,6 +427,39 @@ export default {
           }
         );
       }
+    },
+
+    createExposure(row) {
+      this.mode = "创建曝光";
+      this.dialogVisible = true;
+      this.createExposureSupervisee = row.name;
+    },
+
+    createExposureConfirm() {
+      var that = this;
+      this.confirmButtonLoading = true;
+      this.etInstance.createExposure(
+        this.createExposureSupervisee,
+        this.dialogInput,
+        {
+          from: this.web3.eth.accounts[0],
+          gas: 4700000
+        },
+        async function(err, transactionHash) {
+          if (err) {
+            await that.unlockAccount();
+            that.confirmButtonLoading = false;
+          } else {
+            await that.mining("createExposureEvent", transactionHash);
+            that.$message({
+              type: "success",
+              message: "创建成功"
+            });
+            that.confirmButtonLoading = false;
+            that.dialogVisible = false;
+          }
+        }
+      );
     }
   }
 };
@@ -410,39 +481,4 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
-/* .el-header,
-.el-footer {
-  background-color: #b3c0d1;
-  color: #333;
-  text-align: center;
-  line-height: 60px;
-}
-
-.el-aside {
-  background-color: #d3dce6;
-  color: #333;
-  text-align: center;
-  line-height: 200px;
-}
-
-.el-main {
-  background-color: #e9eef3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
-} */
 </style>
