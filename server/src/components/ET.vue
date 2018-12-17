@@ -2,7 +2,7 @@
   <div>
     <el-container v-if="tableVisible">
       <el-header>
-        <el-tooltip :visible-arrow="false" effect="light" content="宝宝" placement="right">
+        <el-tooltip :visible-arrow="false" effect="dark" :content="supervisee?'点击右侧曝光相应条目回复曝光':'点击左侧监督对象条目创建曝光'" placement="right">
           <span>曝光台</span>
         </el-tooltip>
         <span>{{ name+'（监督'+(supervisee?'对象':'者')+'）' }}</span>
@@ -28,7 +28,12 @@
           </el-table>
         </el-aside>
         <el-main>
-          <el-table :data="exposureList" v-loading="exposureLoading" v-if="tableAlive">
+          <el-table
+            :data="exposureList"
+            v-loading="exposureLoading"
+            @row-click="replyExposure"
+            v-if="tableAlive"
+          >
             <el-table-column prop="superviserName" label="监督者">
               <template slot-scope="scope">
                 <span>{{ scope.row.superviserName }}</span>
@@ -66,11 +71,11 @@
     <el-dialog
       :title="mode"
       :visible.sync="dialogVisible"
-      :close-on-click-modal="mode=='创建曝光'"
-      :close-on-press-escape="mode=='创建曝光'"
-      :show-close="mode=='创建曝光'"
+      :close-on-click-modal="mode=='创建曝光'||mode=='回复曝光'"
+      :close-on-press-escape="mode=='创建曝光'||mode=='回复曝光'"
+      :show-close="mode=='创建曝光'||mode=='回复曝光'"
       :center="false"
-      :modal="mode=='创建曝光'"
+      :modal="mode=='创建曝光'||mode=='回复曝光'"
     >
       <el-input v-if="mode=='新建节点账户'" v-model="dialogInput" type="password" placeholder="请设置密码"></el-input>
 
@@ -82,6 +87,12 @@
         v-if="mode=='创建曝光'"
         v-model="dialogInput"
         :placeholder="'请输入曝光 '+createExposureSupervisee+' 的内容'"
+      ></el-input>
+
+      <el-input
+        v-if="mode=='回复曝光'"
+        v-model="dialogInput"
+        :placeholder="'请输入回复“'+replyExposureDetail+'”的内容'"
       ></el-input>
 
       <span slot="footer">
@@ -103,6 +114,12 @@
           :loading="confirmButtonLoading"
           @click="createExposureConfirm"
         >确 定</el-button>
+        <el-button
+          v-if="mode=='回复曝光'"
+          type="primary"
+          :loading="confirmButtonLoading"
+          @click="replyExposureConfirm"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -123,6 +140,7 @@ export default {
     if (this.web3.eth.accounts.length == 0) {
       this.mode = "新建节点账户";
       this.dialogVisible = true;
+      this.dialogInput = "";
     } else {
       this.contract();
     }
@@ -148,7 +166,8 @@ export default {
       mode: "",
       name: "",
       supervisee: false,
-      createExposureSupervisee: ""
+      createExposureSupervisee: "",
+      replyExposureDetail: ""
     };
   },
   filters: {
@@ -218,6 +237,7 @@ export default {
       if (!this.etInstance.useraddrExist(this.web3.eth.accounts[0])) {
         this.mode = "注册合约用户";
         this.dialogVisible = true;
+        this.dialogInput = "";
       } else {
         that.tableVisible = true;
         that.userInfo();
@@ -304,7 +324,7 @@ export default {
               reply: "",
               replyTime: 0
             });
-            if (that.name == result.args.superviseeName) {
+            if (that.supervisee && that.name == result.args.superviseeName) {
               that.$notify({
                 title: result.args.superviserName,
                 message: result.args.detail,
@@ -322,7 +342,10 @@ export default {
             if (that.exposureList[i].index == result.args.index.c[0]) {
               that.exposureList[i].reply = result.args.reply;
               that.exposureList[i].replyTime = result.args.time;
-              if (that.name == that.exposureList[i].superviserName) {
+              if (
+                !that.supervisee &&
+                that.name == that.exposureList[i].superviserName
+              ) {
                 that.$notify({
                   title: that.exposureList[i].superviseeName,
                   message: result.args.reply,
@@ -430,9 +453,12 @@ export default {
     },
 
     createExposure(row) {
-      this.mode = "创建曝光";
-      this.dialogVisible = true;
-      this.createExposureSupervisee = row.name;
+      if (!this.supervisee) {
+        this.mode = "创建曝光";
+        this.dialogVisible = true;
+        this.dialogInput = "";
+        this.createExposureSupervisee = row.name;
+      }
     },
 
     createExposureConfirm() {
@@ -454,6 +480,47 @@ export default {
             that.$message({
               type: "success",
               message: "创建成功"
+            });
+            that.confirmButtonLoading = false;
+            that.dialogVisible = false;
+          }
+        }
+      );
+    },
+
+    replyExposure(row) {
+      if (
+        this.supervisee &&
+        row.superviseeName == this.name &&
+        row.replyTime == 0
+      ) {
+        this.mode = "回复曝光";
+        this.dialogVisible = true;
+        this.dialogInput = "";
+        this.replyExposureDetail = row.detail;
+        this.replyExposureIndex = row.index;
+      }
+    },
+
+    replyExposureConfirm() {
+      var that = this;
+      this.confirmButtonLoading = true;
+      this.etInstance.replyExposure(
+        this.replyExposureIndex,
+        this.dialogInput,
+        {
+          from: this.web3.eth.accounts[0],
+          gas: 4700000
+        },
+        async function(err, transactionHash) {
+          if (err) {
+            await that.unlockAccount();
+            that.confirmButtonLoading = false;
+          } else {
+            await that.mining("replyExposureEvent", transactionHash);
+            that.$message({
+              type: "success",
+              message: "回复成功"
             });
             that.confirmButtonLoading = false;
             that.dialogVisible = false;

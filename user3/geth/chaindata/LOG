@@ -27,3 +27,9 @@
 08:45:48.489492 version@stat F·[2] S·378KiB[378KiB] Sc·[0.50]
 08:45:48.491251 db@janitor F·4 G·0
 08:45:48.491295 db@open done T·20.004811ms
+16:05:13.585882 table@compaction L0·2 -> L1·0 S·378KiB Q·4651
+16:05:13.599977 table@build created L1@8 N·3316 S·328KiB "\x01\xf9\x93..6DN,v4509":"\xfc\xfc\x82..\x8f\xd9\xc2,v4412"
+16:05:13.600056 version@stat F·[0 1] S·328KiB[0B 328KiB] Sc·[0.00 0.00]
+16:05:13.600381 table@compaction committed F-1 S-50KiB Ke·0 D·1233 T·14.419378ms
+16:05:13.601077 table@remove removed @5
+16:05:13.602049 table@remove removed @2
