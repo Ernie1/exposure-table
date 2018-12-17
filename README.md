@@ -1,8 +1,6 @@
+<h1 align="center">曝光台</h1>
 <p align="center">
-  <h1>曝光台</h1>
-  <p align="center">
-    基于 Web3 和 Vue.JS 的以太坊 dAPP
-  </p>
+基于 Web3 和 Vue.JS 的以太坊 dAPP
 </p>
 
 ## 背景依据
