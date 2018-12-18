@@ -50,7 +50,7 @@ exposure-table $ cd user3 && geth --datadir . console --identity "user3" --port 
 ```bash
 exposure-table $ cd user4 && geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
 ```
-如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，将 exposure-table/user0 文件夹复制进来，然后初始化。
+如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，将 [user0/genesis.json](user0/genesis.json) 复制进来，然后初始化。
 ```bash
 新的文件夹 $ geth --datadir . init genesis.json
 ```
