@@ -28,10 +28,9 @@
 ### 前期准备
 需要自行[安装 geth](https://github.com/ethereum/go-ethereum/wiki/Installing-Geth)。
 
-然后克隆该仓库并安装依赖。
+然后克隆该仓库。
 ```bash
 ~ $ git clone https://github.com/Ernie1/exposure-table.git && cd exposure-table
-exposure-table $ npm install
 ```
 ### 启动以太坊客户端
 新建多个位于 exposure-table 文件夹位置的终端窗口以启动多个节点。
@@ -50,9 +49,9 @@ exposure-table $ cd user3 && geth --datadir . console --identity "user3" --port 
 ```bash
 exposure-table $ cd user4 && geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
 ```
-如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，将 [user0/genesis.json](user0/genesis.json) 复制进来，然后初始化。
+如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，然后初始化。
 ```bash
-新的文件夹 $ geth --datadir . init genesis.json
+新的文件夹 $ geth --datadir . init ../genesis.json
 ```
 并按照 user[0-4] 类似的方法启动节点，并获取节点信息。
 ```bash
