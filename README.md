@@ -25,6 +25,30 @@
 
     使用 Web3 实现用户界面和以太坊客户端的交互，使用 Vue.JS 搭建直观友好的操作界面，降低用户学习成本。
 ## 使用说明
+需要自行[安装 geth](https://github.com/ethereum/go-ethereum/wiki/Installing-Geth)。
+
+然后克隆该仓库。
+```bash
+~ $ git clone https://github.com/Ernie1/exposure-table.git && cd exposure-table
+exposure-table $ npm install
+```
+新建多个位于exposure-table文件夹位置的终端窗口。
+```bash
+exposure-table $ cd user0 && geth --datadir . console --identity "user0" --port "30303" --rpc --rpccorsdomain="*" --rpcport "8545" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+```
+```bash
+exposure-table $ cd user1 && geth --datadir . console --identity "user1" --port "30304" --rpc --rpccorsdomain="*" --rpcport "8546" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+```
+```bash
+exposure-table $ cd user2 && geth --datadir . console --identity "user2" --port "30305" --rpc --rpccorsdomain="*" --rpcport "8547" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+```
+```bash
+exposure-table $ cd user3 && geth --datadir . console --identity "user3" --port "30306" --rpc --rpccorsdomain="*" --rpcport "8548" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+```
+```bash
+exposure-table $ cd user4 && geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
+```
+
 ![](screenshot/2018-12-16-17.00.10.png)
 [UI/config/index.js](UI/config/index.js)
 ## 测试

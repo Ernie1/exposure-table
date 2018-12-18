@@ -2,7 +2,12 @@
   <div>
     <el-container v-if="tableVisible">
       <el-header>
-        <el-tooltip :visible-arrow="false" effect="dark" :content="supervisee?'点击右侧曝光相应条目回复曝光':'点击左侧监督对象条目创建曝光'" placement="right">
+        <el-tooltip
+          :visible-arrow="false"
+          effect="dark"
+          :content="supervisee?'点击右侧曝光相应条目回复曝光':'点击左侧监督对象条目创建曝光'"
+          placement="right"
+        >
           <span>曝光台</span>
         </el-tooltip>
         <span>{{ name+'（监督'+(supervisee?'对象':'者')+'）' }}</span>
@@ -133,11 +138,12 @@ import { formatTime } from "../../build/my-utils";
 
 export default {
   name: "ET",
+
   created: async function() {
     // 连接 rpc
     await this.connect();
     // 连接各节点
-    nodeInfo.forEach(item=>this.web3.admin.addPeer(item));
+    nodeInfo.forEach(item => this.web3.admin.addPeer(item));
     // 节点账户
     if (this.web3.eth.accounts.length == 0) {
       this.mode = "新建节点账户";
@@ -172,9 +178,11 @@ export default {
       replyExposureDetail: ""
     };
   },
+
   filters: {
     formatTime
   },
+
   methods: {
     connect: async function() {
       return new Promise((resolve, _) => {
