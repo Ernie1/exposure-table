@@ -4,7 +4,7 @@
 </p>
 
 ## 背景
-区块链是基于P2P网络、共识机制和加密算法等技术的新型应用模式，有广阔的应用前景。该曝光台基于区块链，利用区块链去中心化、数据难以篡改的特点，提供更优越的业务功能。
+区块链是基于 P2P 网络、共识机制和加密算法等技术的新型应用模式，有广阔的应用前景。该曝光台基于区块链，利用区块链去中心化、数据难以篡改的特点，提供更优越的业务功能。
 ### 优势
 - 管理高效性  
     
@@ -25,14 +25,16 @@
 
     使用 Web3 实现用户界面和以太坊客户端的交互，使用 Vue.JS 搭建直观友好的操作界面，降低用户学习成本。
 ## 使用说明
+### 前期准备
 需要自行[安装 geth](https://github.com/ethereum/go-ethereum/wiki/Installing-Geth)。
 
-然后克隆该仓库。
+然后克隆该仓库并安装依赖。
 ```bash
 ~ $ git clone https://github.com/Ernie1/exposure-table.git && cd exposure-table
 exposure-table $ npm install
 ```
-新建多个位于exposure-table文件夹位置的终端窗口。
+### 启动以太坊客户端
+新建多个位于 exposure-table 文件夹位置的终端窗口以启动多个节点。
 ```bash
 exposure-table $ cd user0 && geth --datadir . console --identity "user0" --port "30303" --rpc --rpccorsdomain="*" --rpcport "8545" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
 ```
@@ -48,7 +50,71 @@ exposure-table $ cd user3 && geth --datadir . console --identity "user3" --port 
 ```bash
 exposure-table $ cd user4 && geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
 ```
+如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，将 exposure-table/user0 文件夹复制进来，然后初始化。
+```bash
+新的文件夹 $ geth --datadir . init genesis.json
+```
+并按照 user[0-4] 类似的方法启动节点，并获取节点信息。
+```bash
+> admin.nodeInfo
+```
+将返回结果的 `enode` 字段的值加入 [UI/config/index.js](UI/config/index.js) 的 `nodeInfo` 字段的数组中。
+### 启动用户界面
+```bash
+exposure-table $ cd UI
+UI $ npm install
+UI $ npm start
+```
+打开浏览器访问 `http://localhost:8080` 。可以同时打开多个界面操作不同的节点。
 
-![](screenshot/2018-12-16-17.00.10.png)
-[UI/config/index.js](UI/config/index.js)
+#### 总体效果
+![](screenshot/2018-12-17-19.25.55.png)
+#### 操作流程
+输入 rpc 端口号连接到对应的以太坊客户端。
+![](screenshot/2018-12-17-14.45.57.png)
+如果当前节点没有以太坊账户，需要设置一个密码新建账户。
+![](screenshot/2018-12-16-18.01.42.png)
+![](screenshot/2018-12-16-18.02.03.png)
+![](screenshot/2018-12-16-18.02.10.png)
+![](screenshot/2018-12-16-18.02.13.png)
+如果当前节点没有合约（曝光台）用户，需要设置用户名和是否被监督来注册用户，勾选“被监督”的用户身份为监督对象，否则为监督者。
+![](screenshot/2018-12-16-18.10.04.png)
+![](screenshot/2018-12-16-18.11.19.png)
+注册合约用户是一笔以太坊交易，需要以太坊账户的权限，如果权限已经超时，需要输入密码解锁。
+![](screenshot/2018-12-16-18.19.43.png)
+正确输入密码后，回到“注册合约用户”对话框，再次点击“确定”，以太坊客户端会开始挖矿。
+![](screenshot/2018-12-16-18.20.41.png)
+交易完成（注册成功）后会自动停止挖矿，进入曝光台界面。
+![](screenshot/2018-12-17-09.01.43.png)
+已经注册合约用户的节点，下次进入用户界面时只需要输入对应的 rpc 端口号连接到以太坊客户端后就可以直接进入曝光台界面。
+![](screenshot/2018-12-17-13.31.08.png)
+监督者用户可以点击左侧监督对象条目创建曝光。被监督者用户点击无效。
+![](screenshot/2018-12-18-15.54.18.png)
+![](screenshot/2018-12-17-15.33.31.png)
+![](screenshot/2018-12-17-16.05.01.png)
+创建曝光是一笔以太坊交易，需要以太坊账户的权限，如果权限已经超时，需要输入密码解锁。
+![](screenshot/2018-12-17-15.34.15.png)
+正确输入密码后，回到“创建曝光”对话框，再次点击“确定”，以太坊客户端会开始挖矿。
+![](screenshot/2018-12-17-16.05.13.png)
+交易完成（创建曝光）后会自动停止挖矿，进入曝光台界面。
+![](screenshot/2018-12-17-16.05.15.png)
+对应的曝光对象的用户界面会实时显示横幅通知。
+![](screenshot/2018-12-17-16.05.17.png)
+![](screenshot/2018-12-17-16.08.00.png)
+被监督者用户可以点击右侧曝光相应条目回复曝光。回复过的和不属于自己的点击无效。监督者用户点击无效。
+![](screenshot/2018-12-18-15.52.22.png)
+![](screenshot/2018-12-17-18.57.38.png)
+回复曝光是一笔以太坊交易，需要以太坊账户的权限，如果权限已经超时，需要输入密码解锁。
+![](screenshot/2018-12-17-19.14.12.png)
+正确输入密码后，回到“回复曝光”对话框，再次点击“确定”，以太坊客户端会开始挖矿。交易完成（回复曝光）后会自动停止挖矿，进入曝光台界面。
+![](screenshot/2018-12-17-19.14.27.png)
+对应的曝光者的用户界面会实时显示横幅通知。
+![](screenshot/2018-12-17-19.14.30.png)
+![](screenshot/2018-12-17-19.19.04.png)
 ## 测试
+连接以太坊客户端失败提示。
+![](screenshot/2018-12-18-15.51.58.png)
+注册合约用户时用户名已存在提示。
+![](screenshot/2018-12-17-19.23.58.png)
+解锁节点账户时密码错误提示。
+![](screenshot/2018-12-18-15.52.43.png)
