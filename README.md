@@ -46,14 +46,11 @@ exposure-table $ cd user2 && geth --datadir . console --identity "user2" --port 
 ```bash
 exposure-table $ cd user3 && geth --datadir . console --identity "user3" --port "30306" --rpc --rpccorsdomain="*" --rpcport "8548" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
 ```
-```bash
-exposure-table $ cd user4 && geth --datadir . console --identity "user4" --port "30307" --rpc --rpccorsdomain="*" --rpcport "8549" --rpcapi "db,eth,net,web3,miner,personal,admin" --networkid 15 console
-```
 如果需要添加更多的节点，每个节点需要在 exposure-table 文件夹下新建一个文件夹，然后初始化。
 ```bash
 新的文件夹 $ geth --datadir . init ../genesis.json
 ```
-并按照 user[0-4] 类似的方法启动节点，并获取节点信息。
+并按照 user[0-3] 类似的方法启动节点，并获取节点信息。
 ```bash
 > admin.nodeInfo
 ```
